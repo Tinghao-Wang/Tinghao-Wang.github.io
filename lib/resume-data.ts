@@ -134,7 +134,7 @@ export const resumeData: ResumeSection[] = [
         media: [
           {
             type: "video",
-            src: "/videos/damenkyt-system-demo.mov",
+            src: "/videos/damenkyt-system-demo.mp4",
             title: "DamenKYT 系統功能 Demo",
           },
         ],
