@@ -3,6 +3,7 @@ export interface ResumeSection {
   title: string
   subtitle?: string
   description: string
+  descriptionHtml?: string
   position: [number, number, number]
   image?: string
   items?: Array<{
@@ -28,7 +29,14 @@ export const resumeData: ResumeSection[] = [
     title: "王廷浩 Barry",
     subtitle: "Web3 / AI 全端工程師｜專案經理",
     description:
-      "・最大優勢：「快速學習、解決問題」\n・10+ 年跨產業經驗，近兩年深耕 Web3、AI 與資料工程\n・擅長規劃並實現MVP（Minimum Viable Product）「梳理資料來源 → 後端服務 → 結合 AI → 前端使用者體驗」 的整體技術版圖\n・熟悉 Solidity、Move、Python、FastAPI、Node.js、Next.js、AWS、GCP、Docker 等技術棧，能獨立完成模組化後端、資料庫串接、良好使用者體驗前端與雲端部署",
+      "最大優勢是「快速學習、解決問題」，結合跨域經驗打造落地產品。近兩年聚焦 Web3、AI 與資料工程，善於規劃從資料整理、後端模組、AI 整合到前端體驗的 MVP 流程。",
+    descriptionHtml: /* html */ `<p><strong>關鍵優勢：</strong>快速學習與問題解決，能整合跨領域資源並打造高質感的產品體驗。</p>
+<p><strong>專注領域：</strong>近兩年深耕 Web3、AI 與資料工程，擅長規劃從資料梳理、後端模組化服務、AI 模型整合到前端使用者體驗的 MVP 流程。</p>
+<ul>
+  <li><strong>架構與開發：</strong>Solidity、Move、Python、FastAPI、Node.js、Next.js</li>
+  <li><strong>資料與雲端：</strong>Supabase、PostgreSQL、MongoDB、AWS、GCP、Docker</li>
+  <li><strong>產品交付：</strong>能獨立完成系統設計、資料庫串接、使用者體驗與雲端部署</li>
+</ul>`,
     position: [-14, 10, 1],
     image: "/profile.jpg",
     items: [

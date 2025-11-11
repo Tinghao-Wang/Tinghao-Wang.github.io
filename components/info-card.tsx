@@ -73,33 +73,51 @@ export function InfoCard({ section, isVisible }: InfoCardProps) {
         isVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8"
       }`}
     >
-      {section.image && (
-        <div className="absolute top-6 right-6 hidden md:block">
-          <div className="w-28 h-28 rounded-full border-4 border-background shadow-lg overflow-hidden">
-            <Image
-              src={section.image}
-              alt={`${section.title} avatar`}
-              width={112}
-              height={112}
-              className="w-full h-full object-cover"
-              priority
-            />
+      <div className="p-6 space-y-6">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-6">
+          <div>
+            <h2 className="text-2xl font-bold text-primary">{section.title}</h2>
+            {section.subtitle && <p className="text-muted-foreground text-sm mt-1">{section.subtitle}</p>}
+            {section.items && section.items[0] && section.items[0].description?.startsWith("格言") && (
+              <p className="text-sm text-primary/80 mt-3 border-l-2 border-primary/50 pl-3">
+                {section.items[0].description}
+              </p>
+            )}
           </div>
-        </div>
-      )}
-      <div className={cn("p-6 space-y-4", section.image ? "md:pr-36" : "")}>
-        <div>
-          <h2 className="text-2xl font-bold text-primary">{section.title}</h2>
-          {section.subtitle && <p className="text-muted-foreground text-sm mt-1">{section.subtitle}</p>}
+          {section.image && (
+            <div className="self-start md:self-center">
+              <div className="w-24 h-24 md:w-28 md:h-28 rounded-full border-4 border-background shadow-lg overflow-hidden">
+                <Image
+                  src={section.image}
+                  alt={`${section.title} avatar`}
+                  width={112}
+                  height={112}
+                  className="w-full h-full object-cover"
+                  priority
+                />
+              </div>
+            </div>
+          )}
         </div>
 
-        <p className="text-foreground/90 leading-relaxed whitespace-pre-line">
-          {highlightDescription(section.description)}
-        </p>
+        <div className="pt-2 space-y-4 border-t border-primary/10">
+          {section.descriptionHtml ? (
+            <div
+              className="text-foreground/90 leading-relaxed space-y-4 [&_ul]:list-disc [&_ul]:pl-5 [&_li]:mt-1 [&_strong]:text-primary [&_em]:text-primary/80"
+              dangerouslySetInnerHTML={{ __html: section.descriptionHtml }}
+            />
+          ) : (
+            <p className="text-foreground/90 leading-relaxed whitespace-pre-line">
+              {highlightDescription(section.description)}
+            </p>
+          )}
+        </div>
 
         {section.items && section.items.length > 0 && (
-          <div className="space-y-4 mt-6">
-            {section.items.map((item, index) => {
+          <div className="space-y-4">
+            {section.items
+              .slice(section.items[0]?.description?.startsWith("格言") ? 1 : 0)
+              .map((item, index) => {
               const hasHeader = Boolean(item.title || item.subtitle)
 
               return (
