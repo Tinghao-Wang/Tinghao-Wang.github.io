@@ -1,11 +1,11 @@
 "use client"
 
-import { Canvas } from "@react-three/fiber"
 import { OrbitControls, PerspectiveCamera, Environment, Stars } from "@react-three/drei"
+import { Canvas, useThree } from "@react-three/fiber"
 import { FloatingIsland } from "./floating-island"
 import { GlowingOrb } from "./glowing-orb"
 import { Rocket } from "./rocket"
-import { Suspense, useEffect, useRef } from "react"
+import { Suspense, useEffect, useRef, type ElementType } from "react"
 import * as THREE from "three"
 
 interface SceneProps {
@@ -14,15 +14,45 @@ interface SceneProps {
   orbPositions: Array<[number, number, number]>
 }
 
+const Color = "color" as unknown as ElementType
+const AmbientLight = "ambientLight" as unknown as ElementType
+const DirectionalLight = "directionalLight" as unknown as ElementType
+const HemisphereLight = "hemisphereLight" as unknown as ElementType
+type OrbitControlsHandle = {
+  target: THREE.Vector3
+  update: () => void
+}
+
 function SceneContent({ currentSection, cameraPositions, orbPositions }: SceneProps) {
   const cameraRef = useRef<THREE.PerspectiveCamera>(null)
-  const controlsRef = useRef<any>(null)
+  const controlsRef = useRef<OrbitControlsHandle | null>(null)
   const spotlightRef = useRef<THREE.SpotLight>(null)
   const spotlightTargetRef = useRef(new THREE.Object3D())
+  const { scene } = useThree()
+
+  useEffect(() => {
+    const spotlight = new THREE.SpotLight("#fff3d6", 12)
+    spotlight.angle = Math.PI / 1
+    spotlight.penumbra = 0.75
+    spotlight.distance = 40
+    spotlight.decay = 1.2
+    spotlight.power = 2200
+    spotlight.castShadow = true
+    spotlight.target = spotlightTargetRef.current
+
+    spotlightRef.current = spotlight
+    scene.add(spotlight)
+    scene.add(spotlightTargetRef.current)
+
+    return () => {
+      scene.remove(spotlight)
+      scene.remove(spotlightTargetRef.current)
+    }
+  }, [scene])
 
   const computeSpotlightPosition = (cameraPosition: THREE.Vector3, targetPosition: THREE.Vector3) => {
     const cameraDirection = cameraPosition.clone().sub(targetPosition)
-    const heightOffset = Math.max(cameraDirection.length() * 0.35, 2.5)
+    const heightOffset = Math.max(cameraDirection.length() * 1.0, 1)
     const distanceOffset = Math.max(cameraDirection.length() * 0.6, 3.5)
 
     if (cameraDirection.length() === 0) {
@@ -99,10 +129,17 @@ function SceneContent({ currentSection, cameraPositions, orbPositions }: ScenePr
 
   return (
     <>
-      <color attach="background" args={["#050218"]} />
+      <Color attach="background" args={["#050218"]} />
       <PerspectiveCamera ref={cameraRef} makeDefault position={cameraPositions[0]} fov={50} />
       <OrbitControls
-        ref={controlsRef}
+        ref={(instance) => {
+          controlsRef.current = instance
+            ? {
+                target: instance.target,
+                update: instance.update.bind(instance),
+              }
+            : null
+        }}
         enableZoom={false}
         enablePan={false}
         enableRotate={false}
@@ -113,10 +150,10 @@ function SceneContent({ currentSection, cameraPositions, orbPositions }: ScenePr
       />
 
       {/* Lighting */}
-      <ambientLight intensity={0.4} />
-      <directionalLight position={[25, 30, 20]} intensity={1.2} castShadow color="#ffd9a5" />
-      <directionalLight position={[-20, 12, -15]} intensity={0.4} color="#9bb7ff" />
-      <hemisphereLight args={["#8ec5ff", "#88cc77", 0.4]} />
+      <AmbientLight intensity={0.4} />
+      <DirectionalLight position={[25, 30, 20]} intensity={1.2} castShadow color="#ffd9a5" />
+      <DirectionalLight position={[-20, 12, -15]} intensity={0.4} color="#9bb7ff" />
+      <HemisphereLight args={["#8ec5ff", "#88cc77", 0.4]} />
       <Stars
         radius={140}
         depth={80}
@@ -126,20 +163,6 @@ function SceneContent({ currentSection, cameraPositions, orbPositions }: ScenePr
         fade
         speed={0.35}
       />
-      <spotLight
-        ref={spotlightRef}
-        angle={Math.PI / 1}
-        penumbra={0.75}
-        distance={40}
-        decay={1.2}
-        intensity={12}
-        power={1800}
-        color="#fff3d6"
-        castShadow
-      >
-        <primitive object={spotlightTargetRef.current} />
-      </spotLight>
-
       <Suspense fallback={null}>
         <Environment preset="night" />
         <FloatingIsland />

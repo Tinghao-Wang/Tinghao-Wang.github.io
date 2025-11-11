@@ -10,6 +10,15 @@ export interface ResumeSection {
     subtitle?: string
     description: string
     tags?: string[]
+    media?: Array<{
+      type: "video"
+      src: string
+      title?: string
+    }>
+    links?: Array<{
+      label: string
+      url: string
+    }>
   }>
 }
 
@@ -19,7 +28,7 @@ export const resumeData: ResumeSection[] = [
     title: "王廷浩 Barry",
     subtitle: "Web3 / AI 全端工程師｜專案經理",
     description:
-      "・最大優勢：「快速學習、解決問題」\n・10+ 年跨產業經驗，近兩年深耕 Web3、AI 與資料工程\n・擅長規劃「梳理資料來源 → 後端服務 → 結合 AI → 前端使用者體驗」 的整體技術版圖\n・熟悉 Solidity、Move、Python、FastAPI、Node.js、Next.js 等技術棧，能獨立完成模組化後端、質感前端與雲端部署",
+      "・最大優勢：「快速學習、解決問題」\n・10+ 年跨產業經驗，近兩年深耕 Web3、AI 與資料工程\n・擅長規劃並實現MVP（Minimum Viable Product）「梳理資料來源 → 後端服務 → 結合 AI → 前端使用者體驗」 的整體技術版圖\n・熟悉 Solidity、Move、Python、FastAPI、Node.js、Next.js、AWS、GCP、Docker 等技術棧，能獨立完成模組化後端、資料庫串接、良好使用者體驗前端與雲端部署",
     position: [-14, 10, 1],
     image: "/profile.jpg",
     items: [
@@ -56,7 +65,7 @@ export const resumeData: ResumeSection[] = [
       {
         title: "大門科技顧問有限公司｜Web3/AI 全端工程師（2024.09－至今）",
         description:
-          "・規劃 AlphaGroupAgent 智能投研平台全鏈路，自動化整理研究資料。\n・打造 Flashnet 自動交易系統，串接 Gate.io API 與安全機制。\n・建置 DamenKYT 反洗錢平台並整合多鏈風險模型。\n・主導 AlphaDAO 的 AI 工具流程與交易團隊。",
+          "・規劃與建立 AlphaGroupAgent AI自動化整理研究資料。\n・主導 AlphaDAO 量化交易團隊。\n・打造 Flashnet 高效網格自動交易系統，串接 Gate.io API 與安全風控機制。\n・建置 DamenKYT 反洗錢平，錢包風險查詢、金流追蹤、自動整合報告協助報案。",
         tags: ["FastAPI", "Node.js", "Next.js", "Supabase", "Web3", "AI"],
       },
       {
@@ -76,19 +85,59 @@ export const resumeData: ResumeSection[] = [
   {
     id: "projects",
     title: "精選專案",
-    subtitle: "AI × Web3 × Data Driven",
+    subtitle: "AI × Web3 × Blockchain",
     description: "整合 AI 推論、區塊鏈互動與全端架構的多項專案，展現跨領域整合與落地能力。",
     position: [-15, 2.8, 2],
     items: [
       {
-        title: "Papago｜AI 自動旅遊行程規劃（2023）",
-        description: "整合 OpenAI API、地圖與旅遊資料，生成多語多日行程並支援花費估算，一鍵輸出 PDF。",
-        tags: ["OpenAI", "Python", "React"],
+        title: "AlphaGroupAgent｜AI 自動化研究助手（2025）",
+        description:
+          "規劃與建立 AlphaGroupAgent，串聯多來源研究資料並以向量檢索與提示工程，結合 AI 自動整理研究資料、自動更新即時資訊，協助投研團隊快速掌握重點與最新動態。",
+        tags: ["FastAPI", "Next.js", "Supabase", "AI", "量化策略研究"],
+        links: [
+          {
+            label: "產品頁面",
+            url: "https://agent.damentec.com/",
+          },
+        ],
       },
       {
-        title: "Web3 群眾募資平台（2023）",
-        description: "使用 Solidity、Vite、React、Tailwind 構築，部署於 Fantom 測試鏈，支援 MetaMask 互動與資金管理。",
-        tags: ["Solidity", "ethers.js", "Tailwind"],
+        title: "Flashnet｜網格自動交易系統（2025）",
+        description:
+          "打造 Flashnet 網格自動交易系統，整合 Gate.io API 提供自動化網格交易功能，加入安全風控機制，達成自動化策略執行與高效率資金配置。資金利用率比交易所提供的網格交易高出十倍。",
+        tags: ["Node.js", "Trading", "Web3", "Blockchain", "Security"],
+        links: [
+          {
+            label: "專案使用教學頁面",
+            url: "https://agent.damentec.com/flashnet/tutorial",
+          },
+        ],
+        media: [
+          {
+            type: "video",
+            src: "/videos/flashnet-demo.mp4",
+            title: "Flashnet 系統功能 Demo",
+          },
+        ],
+      },
+      {
+        title: "DamenKYT｜Web3反詐騙平台（2024）",
+        description:
+          "建置 DamenKYT 反詐騙平台，如同Web3版本的「Whoscall」，整合案件申報、錢包風險評估、金流追蹤等，實現群眾報案、追蹤被竊資金與加速報案流程。",
+        tags: ["FastAPI", "Web3", "Risk Management"],
+        links: [
+          {
+            label: "產品頁面",
+            url: "https://kyt.damentec.com/",
+          },
+        ],
+        media: [
+          {
+            type: "video",
+            src: "/videos/damenkyt-system-demo.mov",
+            title: "DamenKYT 系統功能 Demo",
+          },
+        ],
       },
       {
         title: "Professor-X｜影音整理助教（2024）",
@@ -99,6 +148,16 @@ export const resumeData: ResumeSection[] = [
         title: "PlantGuard｜影像辨識植物病害（2024）",
         description: "使用 OpenCV、TensorFlow 訓練 CNN 模型，提供 16 類病害即時判斷，資料增強後準確率突破 80%。",
         tags: ["TensorFlow", "OpenCV", "FastAPI"],
+      },
+      {
+        title: "Papago｜AI 自動旅遊行程規劃（2023）",
+        description: "整合 OpenAI API、地圖與旅遊資料，生成多語多日行程並支援花費估算，一鍵輸出 PDF。",
+        tags: ["OpenAI", "Python", "React"],
+      },
+      {
+        title: "Web3 群眾募資平台（2023）",
+        description: "使用 Solidity、Vite、React、Tailwind 構築，部署於 Fantom 測試鏈，支援 MetaMask 互動與資金管理。",
+        tags: ["Solidity", "ethers.js", "Tailwind"],
       },
     ],
   },
@@ -141,7 +200,7 @@ export const resumeData: ResumeSection[] = [
     items: [
       {
         title: "直接聯繫",
-        description: "Email：wahao888@gmail.com\n所在地：台北市",
+        description: "Email：wahao888@gmail.com\n所在地：台灣 台北市",
       },
       {
         title: "線上足跡",

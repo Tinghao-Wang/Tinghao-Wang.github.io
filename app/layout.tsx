@@ -8,25 +8,20 @@ const fontSans = Inter({ subsets: ["latin"], variable: "--font-sans" })
 const fontMono = Source_Code_Pro({ subsets: ["latin"], variable: "--font-mono" })
 
 export const metadata: Metadata = {
-  title: "3D Interactive Resume",
+  title: "TingHao Wang",
   description: "An immersive 3D portfolio experience showcasing skills and projects",
   generator: "v0.app",
   icons: {
     icon: [
       {
-        url: "/icon-light-32x32.png",
-        media: "(prefers-color-scheme: light)",
+        url: "/favicon.png",
       },
       {
-        url: "/icon-dark-32x32.png",
-        media: "(prefers-color-scheme: dark)",
-      },
-      {
-        url: "/icon.svg",
+        url: "/favicon.svg",
         type: "image/svg+xml",
       },
     ],
-    apple: "/apple-icon.png",
+    apple: "/apple-touch-icon.png",
   },
 }
 

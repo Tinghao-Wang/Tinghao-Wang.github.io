@@ -22,6 +22,10 @@
         "name": "next"
       }
     ],
+    "types": [
+      "@react-three/fiber",
+      "@types/three"
+    ],
     "paths": {
       "@/*": [
         "./*"
@@ -32,6 +36,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
+    "**/*.d.ts",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],

@@ -4,8 +4,11 @@ import type { ReactNode, WheelEvent } from "react"
 import Image from "next/image"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 import type { ResumeSection } from "@/lib/resume-data"
+import { PlayCircle } from "lucide-react"
 
 interface InfoCardProps {
   section?: ResumeSection
@@ -125,6 +128,64 @@ export function InfoCard({ section, isVisible }: InfoCardProps) {
                           {tag}
                         </Badge>
                       ))}
+                    </div>
+                  )}
+                  {item.links && item.links.length > 0 && (
+                    <div className="mt-3 rounded-md border border-primary/15 bg-background/60 p-3">
+                      {item.links.map((link, linkIndex) => (
+                        <div key={linkIndex} className={linkIndex > 0 ? "mt-2" : ""}>
+                          <a
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-primary hover:underline"
+                          >
+                            {link.label}
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {item.media && item.media.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-4">
+                      {item.media.map((mediaItem, mediaIndex) => {
+                        if (mediaItem.type !== "video") {
+                          return null
+                        }
+
+                        const buttonLabel =
+                          item.media && item.media.length > 1
+                            ? `觀看影片 ${mediaIndex + 1}`
+                            : mediaItem.title ?? "觀看影片"
+
+                        return (
+                          <Dialog key={`${mediaItem.src}-${mediaIndex}`}>
+                            <DialogTrigger asChild>
+                              <Button variant="outline" size="sm" className="gap-2">
+                                <PlayCircle className="h-4 w-4" />
+                                {buttonLabel}
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-4xl">
+                              <DialogHeader>
+                                <DialogTitle>{mediaItem.title ?? item.title ?? "專案影片"}</DialogTitle>
+                              </DialogHeader>
+                              <div className="w-full">
+                                <div className="aspect-video w-full overflow-hidden rounded-md bg-black">
+                                  <video
+                                    src={mediaItem.src}
+                                    controls
+                                    preload="metadata"
+                                    className="h-full w-full"
+                                  >
+                                    您的瀏覽器不支援 HTML5 影片。
+                                  </video>
+                                </div>
+                              </div>
+                            </DialogContent>
+                          </Dialog>
+                        )
+                      })}
                     </div>
                   )}
                 </div>

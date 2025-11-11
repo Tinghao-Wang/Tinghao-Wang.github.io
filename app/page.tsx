@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Scene } from "@/components/scene"
 import { InfoCard } from "@/components/info-card"
 import { NavigationSidebar } from "@/components/navigation-sidebar"
@@ -25,9 +25,18 @@ export default function Home() {
   // Orb positions matching the platform positions
   const orbPositions: Array<[number, number, number]> = resumeData.map((section) => section.position)
 
+  const lastScrollTimeRef = useRef(0)
+
   // Handle scroll-based section changes
   useEffect(() => {
     const handleScroll = (e: WheelEvent) => {
+      const now = Date.now()
+
+      if (now - lastScrollTimeRef.current < 600) {
+        e.preventDefault()
+        return
+      }
+
       if (Math.abs(e.deltaY) < 20) {
         return
       }
@@ -43,7 +52,9 @@ export default function Home() {
         }
 
         if (nextIndex !== prev) {
+          lastScrollTimeRef.current = now
           setShowScrollIndicator(false)
+          e.preventDefault()
         }
 
         return nextIndex
@@ -52,7 +63,7 @@ export default function Home() {
 
       window.addEventListener("wheel", handleScroll, { passive: false })
     return () => window.removeEventListener("wheel", handleScroll)
-  }, [currentSection])
+  }, [])
 
   // Hide scroll indicator after first interaction
   useEffect(() => {
