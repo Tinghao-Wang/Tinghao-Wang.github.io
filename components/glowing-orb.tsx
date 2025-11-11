@@ -8,6 +8,13 @@ interface GlowingOrbProps {
   targetPosition: [number, number, number]
 }
 
+const BASE_INTENSITY = 9
+const INTENSITY_VARIATION = 2.5
+const BASE_SCALE = 0.45
+const SCALE_VARIATION = 0.12
+const LIGHT_DISTANCE = 16
+const LIGHT_DECAY = 1.6
+
 export function GlowingOrb({ targetPosition }: GlowingOrbProps) {
   const orbRef = useRef<THREE.Mesh>(null)
   const lightRef = useRef<THREE.PointLight>(null)
@@ -29,9 +36,9 @@ export function GlowingOrb({ targetPosition }: GlowingOrbProps) {
       lightRef.current.position.y += floatY
 
       // Pulsing animation
-      const pulse = 0.3 + Math.sin(state.clock.elapsedTime * 3) * 0.1
+      const pulse = BASE_SCALE + Math.sin(state.clock.elapsedTime * 3) * SCALE_VARIATION
       orbRef.current.scale.setScalar(pulse)
-      lightRef.current.intensity = 2 + Math.sin(state.clock.elapsedTime * 3) * 0.5
+      lightRef.current.intensity = BASE_INTENSITY + Math.sin(state.clock.elapsedTime * 3) * INTENSITY_VARIATION
     }
   })
 
@@ -39,9 +46,15 @@ export function GlowingOrb({ targetPosition }: GlowingOrbProps) {
     <>
       <mesh ref={orbRef}>
         <sphereGeometry args={[0.3, 32, 32]} />
-        <meshStandardMaterial color="#66ddff" emissive="#66ddff" emissiveIntensity={1.5} transparent opacity={0.8} />
+        <meshStandardMaterial color="#66ddff" emissive="#66ddff" emissiveIntensity={2.2} transparent opacity={0.8} />
       </mesh>
-      <pointLight ref={lightRef} color="#66ddff" intensity={2} distance={5} decay={2} />
+      <pointLight
+        ref={lightRef}
+        color="#66ddff"
+        intensity={BASE_INTENSITY}
+        distance={LIGHT_DISTANCE}
+        decay={LIGHT_DECAY}
+      />
     </>
   )
 }
