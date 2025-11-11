@@ -1,16 +1,21 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useMemo } from "react"
 import { Scene } from "@/components/scene"
 import { InfoCard } from "@/components/info-card"
 import { NavigationSidebar } from "@/components/navigation-sidebar"
 import { ScrollIndicator } from "@/components/scroll-indicator"
 import { MobileMenu } from "@/components/mobile-menu"
-import { resumeData } from "@/lib/resume-data"
+import { LanguageSwitch } from "@/components/language-switch"
+import { getResumeData } from "@/lib/resume-data"
+import { useLanguage } from "@/lib/i18n"
 
 export default function Home() {
   const [currentSection, setCurrentSection] = useState(0)
   const [showScrollIndicator, setShowScrollIndicator] = useState(true)
+  const { language } = useLanguage()
+
+  const resumeSections = useMemo(() => getResumeData(language), [language])
 
   // Camera positions for each section
   const cameraPositions: Array<[number, number, number]> = [
@@ -23,7 +28,10 @@ export default function Home() {
   ]
 
   // Orb positions matching the platform positions
-  const orbPositions: Array<[number, number, number]> = resumeData.map((section) => section.position)
+  const orbPositions: Array<[number, number, number]> = useMemo(
+    () => resumeSections.map((section) => section.position),
+    [resumeSections]
+  )
 
   const lastScrollTimeRef = useRef(0)
 
@@ -42,7 +50,7 @@ export default function Home() {
       }
 
       setCurrentSection((prev) => {
-        const maxIndex = resumeData.length - 1
+        const maxIndex = resumeSections.length - 1
         let nextIndex = prev
 
         if (e.deltaY > 0) {
@@ -61,9 +69,9 @@ export default function Home() {
       })
     }
 
-      window.addEventListener("wheel", handleScroll, { passive: false })
+    window.addEventListener("wheel", handleScroll, { passive: false })
     return () => window.removeEventListener("wheel", handleScroll)
-  }, [])
+  }, [resumeSections.length])
 
   // Hide scroll indicator after first interaction
   useEffect(() => {
@@ -73,12 +81,20 @@ export default function Home() {
     return () => clearTimeout(timer)
   }, [])
 
+  // Ensure current section stays in range when language changes
+  useEffect(() => {
+    setCurrentSection((prev) => Math.min(prev, resumeSections.length - 1))
+  }, [resumeSections.length])
+
   return (
     <main className="relative w-full h-screen overflow-hidden">
       {/* 3D Scene */}
       <div className="absolute inset-0">
         <Scene currentSection={currentSection} cameraPositions={cameraPositions} orbPositions={orbPositions} />
       </div>
+
+      {/* Language Switch */}
+      <LanguageSwitch />
 
       {/* Navigation Sidebar - Desktop */}
       <NavigationSidebar currentSection={currentSection} onSectionChange={setCurrentSection} />
@@ -88,12 +104,12 @@ export default function Home() {
 
       {/* Info Card - Right Side */}
       <div className="fixed right-0 top-1/2 -translate-y-1/2 z-10 mr-8 max-w-md w-full hidden md:block">
-        <InfoCard section={resumeData[currentSection]} isVisible={true} />
+        <InfoCard section={resumeSections[currentSection]} isVisible={true} />
       </div>
 
       {/* Info Card - Mobile (Bottom) */}
       <div className="fixed bottom-0 left-0 right-0 z-10 p-4 md:hidden">
-        <InfoCard section={resumeData[currentSection]} isVisible={true} />
+        <InfoCard section={resumeSections[currentSection]} isVisible={true} />
       </div>
 
       {/* Scroll Indicator */}
@@ -101,7 +117,7 @@ export default function Home() {
 
       {/* Progress Indicator */}
       <div className="fixed bottom-8 right-8 z-20 hidden lg:flex items-center gap-2">
-        {resumeData.map((_, index) => (
+        {resumeSections.map((_, index) => (
           <div
             key={index}
             className={`h-2 rounded-full transition-all duration-300 ${

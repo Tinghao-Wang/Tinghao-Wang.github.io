@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Inter, Source_Code_Pro } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
+import { Providers } from "./providers"
 
 const fontSans = Inter({ subsets: ["latin"], variable: "--font-sans" })
 const fontMono = Source_Code_Pro({ subsets: ["latin"], variable: "--font-mono" })
@@ -33,7 +34,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${fontSans.variable} ${fontMono.variable}`}>
       <body className="font-sans antialiased">
-        {children}
+        <Providers>{children}</Providers>
         <Analytics />
       </body>
     </html>

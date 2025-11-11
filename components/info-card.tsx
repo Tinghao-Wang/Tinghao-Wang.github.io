@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { cn } from "@/lib/utils"
 import type { ResumeSection } from "@/lib/resume-data"
 import { PlayCircle } from "lucide-react"
+import { useLanguage, uiCopy } from "@/lib/i18n"
 
 interface InfoCardProps {
   section?: ResumeSection
@@ -16,12 +17,15 @@ interface InfoCardProps {
 }
 
 export function InfoCard({ section, isVisible }: InfoCardProps) {
+  const { language } = useLanguage()
+  const copy = uiCopy[language]
+
   if (!section) {
     return null
   }
 
   const highlightDescription = (text: string): ReactNode => {
-    const target = "「快速學習、解決問題」"
+    const target = copy.highlightPhrase
 
     if (!text.includes(target)) {
       return text
@@ -78,7 +82,7 @@ export function InfoCard({ section, isVisible }: InfoCardProps) {
           <div>
             <h2 className="text-2xl font-bold text-primary">{section.title}</h2>
             {section.subtitle && <p className="text-muted-foreground text-sm mt-1">{section.subtitle}</p>}
-            {section.items && section.items[0] && section.items[0].description?.startsWith("格言") && (
+            {section.items && section.items[0] && section.items[0].description?.startsWith(copy.mottoPrefix) && (
               <p className="text-sm text-primary/80 mt-3 border-l-2 border-primary/50 pl-3">
                 {section.items[0].description}
               </p>
@@ -116,7 +120,7 @@ export function InfoCard({ section, isVisible }: InfoCardProps) {
         {section.items && section.items.length > 0 && (
           <div className="space-y-4">
             {section.items
-              .slice(section.items[0]?.description?.startsWith("格言") ? 1 : 0)
+              .slice(section.items[0]?.description?.startsWith(copy.mottoPrefix) ? 1 : 0)
               .map((item, index) => {
               const hasHeader = Boolean(item.title || item.subtitle)
 
@@ -173,8 +177,8 @@ export function InfoCard({ section, isVisible }: InfoCardProps) {
 
                         const buttonLabel =
                           item.media && item.media.length > 1
-                            ? `觀看影片 ${mediaIndex + 1}`
-                            : mediaItem.title ?? "觀看影片"
+                            ? copy.watchVideoWithIndex(mediaIndex + 1)
+                            : mediaItem.title ?? copy.watchVideo
 
                         return (
                           <Dialog key={`${mediaItem.src}-${mediaIndex}`}>
@@ -186,7 +190,7 @@ export function InfoCard({ section, isVisible }: InfoCardProps) {
                             </DialogTrigger>
                             <DialogContent className="max-w-4xl">
                               <DialogHeader>
-                                <DialogTitle>{mediaItem.title ?? item.title ?? "專案影片"}</DialogTitle>
+                                <DialogTitle>{mediaItem.title ?? item.title ?? copy.defaultVideoTitle}</DialogTitle>
                               </DialogHeader>
                               <div className="w-full">
                                 <div className="aspect-video w-full overflow-hidden rounded-md bg-black">
@@ -196,7 +200,7 @@ export function InfoCard({ section, isVisible }: InfoCardProps) {
                                     preload="metadata"
                                     className="h-full w-full"
                                   >
-                                    您的瀏覽器不支援 HTML5 影片。
+                                    {copy.videoFallback}
                                   </video>
                                 </div>
                               </div>

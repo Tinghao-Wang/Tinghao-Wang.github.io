@@ -1,8 +1,10 @@
 "use client"
 
 import type React from "react"
+import { useMemo } from "react"
 import { Button } from "@/components/ui/button"
-import { resumeData } from "@/lib/resume-data"
+import { getResumeData } from "@/lib/resume-data"
+import { useLanguage } from "@/lib/i18n"
 
 interface NavigationSidebarProps {
   currentSection: number
@@ -10,6 +12,9 @@ interface NavigationSidebarProps {
 }
 
 export function NavigationSidebar({ currentSection, onSectionChange }: NavigationSidebarProps) {
+  const { language } = useLanguage()
+  const resumeSections = useMemo(() => getResumeData(language), [language])
+
   const handleWheel = (event: React.WheelEvent<HTMLDivElement>) => {
     const { deltaY } = event
 
@@ -20,7 +25,7 @@ export function NavigationSidebar({ currentSection, onSectionChange }: Navigatio
     event.preventDefault()
     event.stopPropagation()
 
-    if (deltaY > 0 && currentSection < resumeData.length - 1) {
+    if (deltaY > 0 && currentSection < resumeSections.length - 1) {
       onSectionChange(currentSection + 1)
     } else if (deltaY < 0 && currentSection > 0) {
       onSectionChange(currentSection - 1)
@@ -30,7 +35,7 @@ export function NavigationSidebar({ currentSection, onSectionChange }: Navigatio
   return (
     <div className="fixed left-0 top-1/2 -translate-y-1/2 z-20 ml-4 hidden lg:block" onWheel={handleWheel}>
       <nav className="inline-flex flex-col glass-card bg-card/30 backdrop-blur-md border border-primary/20 rounded-lg p-1.5 space-y-1">
-        {resumeData.map((section, index) => (
+        {resumeSections.map((section, index) => (
           <Button
             key={section.id}
             variant={currentSection === index ? "default" : "ghost"}

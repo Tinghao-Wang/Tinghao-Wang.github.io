@@ -2,8 +2,9 @@
 
 import { Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { resumeData } from "@/lib/resume-data"
+import { getResumeData } from "@/lib/resume-data"
 import { useState } from "react"
+import { useLanguage } from "@/lib/i18n"
 
 interface MobileMenuProps {
   currentSection: number
@@ -12,6 +13,8 @@ interface MobileMenuProps {
 
 export function MobileMenu({ currentSection, onSectionChange }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false)
+  const { language } = useLanguage()
+  const resumeSections = getResumeData(language)
 
   const handleSectionChange = (index: number) => {
     onSectionChange(index)
@@ -36,7 +39,7 @@ export function MobileMenu({ currentSection, onSectionChange }: MobileMenuProps)
       >
         <div className="absolute inset-0 bg-background/95 backdrop-blur-md" />
         <nav className="relative h-full flex flex-col items-center justify-center gap-4 p-8">
-          {resumeData.map((section, index) => (
+          {resumeSections.map((section, index) => (
             <Button
               key={section.id}
               variant={currentSection === index ? "default" : "outline"}
