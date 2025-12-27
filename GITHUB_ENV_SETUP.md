@@ -1,5 +1,7 @@
 # GitHub Pages 環境變數設置指南
 
+> 最後更新：2025-12-27
+
 ## 步驟 1：在 GitHub Repository 中添加 Secrets
 
 1. 前往您的 GitHub Repository：`https://github.com/Tinghao-Wang/Tinghao-Wang.github.io`
