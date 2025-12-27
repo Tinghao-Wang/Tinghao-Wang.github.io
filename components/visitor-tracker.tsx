@@ -129,8 +129,15 @@ async function sendVisitorNotification(visitorInfo: VisitorInfo) {
   try {
     const emailjsServiceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID
     // 優先使用專門的訪問通知 Template
-    const emailjsTemplateId = process.env.NEXT_PUBLIC_EMAILJS_VISITOR_TEMPLATE_ID || process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID
+    const visitorTemplateId = process.env.NEXT_PUBLIC_EMAILJS_VISITOR_TEMPLATE_ID
+    const downloadTemplateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID
+    const emailjsTemplateId = visitorTemplateId || downloadTemplateId
     const emailjsPublicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
+
+    // 如果沒有設置訪問通知 Template，使用履歷下載的 Template
+    if (!visitorTemplateId && downloadTemplateId) {
+      console.warn("VisitorTracker: Using download template as fallback. Please set NEXT_PUBLIC_EMAILJS_VISITOR_TEMPLATE_ID")
+    }
 
     if (!emailjsServiceId || !emailjsTemplateId || !emailjsPublicKey) {
       return
