@@ -16,6 +16,8 @@
 
 ## 步驟 3：創建 Email Template
 
+### Template 1：履歷下載通知
+
 1. 前往 **Email Templates** 頁面
 2. 點擊 **Create New Template**
 3. 使用以下範本：
@@ -40,7 +42,39 @@
 此郵件由 tinghao-wang.github.io 自動發送
 ```
 
-4. 點擊 **Save** 並記下 **Template ID**
+4. 點擊 **Save** 並記下 **Template ID**（例如：`template_efi3b6g`）
+
+### Template 2：網站訪問通知（可選，但推薦）
+
+1. 再次點擊 **Create New Template**
+2. 使用以下範本：
+
+**Subject（主旨）：**
+```
+網站訪問通知 - {{visitor_country}}
+```
+
+**Content（內容）：**
+```
+您好 {{to_name}}，
+
+有人訪問了您的網站：
+
+訪問時間：{{visitor_time}}
+IP 地址：{{visitor_ip}}
+城市：{{visitor_city}}
+國家：{{visitor_country}}
+時區：{{timezone}}
+語言：{{language}}
+來源：{{referrer}}
+
+---
+此郵件由 tinghao-wang.github.io 自動發送
+```
+
+3. 點擊 **Save** 並記下 **Template ID**
+
+**注意**：如果不創建訪問通知 Template，系統會使用履歷下載的 Template。
 
 ## 步驟 4：獲取 Public Key
 

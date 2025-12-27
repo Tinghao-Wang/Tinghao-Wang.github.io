@@ -7,6 +7,7 @@ import { NavigationSidebar } from "@/components/navigation-sidebar"
 import { ScrollIndicator } from "@/components/scroll-indicator"
 import { MobileMenu } from "@/components/mobile-menu"
 import { LanguageSwitch } from "@/components/language-switch"
+import { VisitorTracker } from "@/components/visitor-tracker"
 import { getResumeData } from "@/lib/resume-data"
 import { useLanguage } from "@/lib/i18n"
 
@@ -126,6 +127,9 @@ export default function Home() {
           />
         ))}
       </div>
+
+      {/* Visitor Tracker - 追蹤訪問者並發送通知 */}
+      <VisitorTracker />
     </main>
   )
 }
