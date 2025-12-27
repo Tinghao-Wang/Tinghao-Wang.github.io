@@ -78,7 +78,6 @@ async function getVisitorInfo(): Promise<VisitorInfo | null> {
 
     // 如果是機器人，直接返回 null
     if (isBot(userAgent)) {
-      console.log("Bot detected, skipping notification:", userAgent)
       return null
     }
 
@@ -129,27 +128,24 @@ async function getVisitorInfo(): Promise<VisitorInfo | null> {
 async function sendVisitorNotification(visitorInfo: VisitorInfo) {
   try {
     const emailjsServiceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID
-    // 可以使用專門的訪問通知 Template，如果沒有則使用履歷下載的 Template
+    // 優先使用專門的訪問通知 Template
     const emailjsTemplateId = process.env.NEXT_PUBLIC_EMAILJS_VISITOR_TEMPLATE_ID || process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID
     const emailjsPublicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
 
     if (!emailjsServiceId || !emailjsTemplateId || !emailjsPublicKey) {
-      console.warn("EmailJS not configured, skipping visitor notification")
       return
     }
 
     // 初始化 EmailJS（如果還沒初始化）
     emailjs.init(emailjsPublicKey)
 
-    await emailjs.send(
-      emailjsServiceId,
-      emailjsTemplateId,
-      {
-        to_name: "Barry",
-        from_name: "網站訪問者",
-        from_email: "visitor@tinghao-wang.github.io",
-        subject: "網站訪問通知",
-        message: `有人訪問了您的網站！
+    // 構建郵件參數，確保包含所有必要的欄位
+    const templateParams = {
+      to_name: "Barry",
+      from_name: "網站訪問者",
+      from_email: "visitor@tinghao-wang.github.io",
+      subject: "網站訪問通知",
+      message: `有人訪問了您的網站！
 
 訪問時間：${visitorInfo.timestamp}
 IP 地址：${visitorInfo.ip}
@@ -160,16 +156,28 @@ IP 地址：${visitorInfo.ip}
 語言：${visitorInfo.language}
 來源：${visitorInfo.referrer}
 User-Agent：${visitorInfo.userAgent}`,
-        visitor_ip: visitorInfo.ip,
-        visitor_city: visitorInfo.city,
-        visitor_country: visitorInfo.country,
-        visitor_time: visitorInfo.timestamp,
-        language: "網站訪問",
-      },
+      // 單獨的欄位，方便 Template 使用
+      visitor_ip: visitorInfo.ip,
+      visitor_city: visitorInfo.city,
+      visitor_region: visitorInfo.region,
+      visitor_country: visitorInfo.country,
+      visitor_country_code: visitorInfo.countryCode,
+      visitor_timezone: visitorInfo.timezone,
+      visitor_time: visitorInfo.timestamp,
+      visitor_language: visitorInfo.language,
+      visitor_referrer: visitorInfo.referrer,
+      visitor_user_agent: visitorInfo.userAgent,
+      // 標記這是訪問通知，不是下載通知
+      notification_type: "visitor",
+      language: "網站訪問",
+    }
+
+    await emailjs.send(
+      emailjsServiceId,
+      emailjsTemplateId,
+      templateParams,
       emailjsPublicKey
     )
-
-    console.log("Visitor notification sent successfully")
   } catch (error) {
     console.error("Failed to send visitor notification:", error)
   }
@@ -181,22 +189,23 @@ export function VisitorTracker() {
 
   useEffect(() => {
     // 檢查是否已經追蹤過（使用 sessionStorage，避免同一個會話重複通知）
-    const sessionKey = `visitor_tracked_${Date.now()}`
     const lastTracked = sessionStorage.getItem("last_visitor_track")
     const now = Date.now()
 
     // 如果 5 分鐘內已經追蹤過，跳過
     if (lastTracked && now - parseInt(lastTracked) < 5 * 60 * 1000) {
-      console.log("Visitor already tracked recently, skipping")
       return
     }
 
     // 延遲 3 秒後再追蹤，確保是真實用戶（機器人通常不會停留）
     trackingTimeoutRef.current = setTimeout(async () => {
-      if (hasTrackedRef.current) return
+      if (hasTrackedRef.current) {
+        return
+      }
       hasTrackedRef.current = true
 
       const visitorInfo = await getVisitorInfo()
+      
       if (visitorInfo) {
         // 記錄追蹤時間
         sessionStorage.setItem("last_visitor_track", now.toString())

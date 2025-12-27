@@ -77,14 +77,8 @@ export function ResumeDownloadDialog({ open, onOpenChange }: ResumeDownloadDialo
         const emailjsTemplateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID
         const emailjsPublicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
 
-        console.log("EmailJS Config:", {
-          serviceId: emailjsServiceId ? "✓" : "✗",
-          templateId: emailjsTemplateId ? "✓" : "✗",
-          publicKey: emailjsPublicKey ? "✓" : "✗",
-        })
-
         if (emailjsServiceId && emailjsTemplateId && emailjsPublicKey) {
-          const result = await emailjs.send(
+          await emailjs.send(
             emailjsServiceId,
             emailjsTemplateId,
             {
@@ -97,9 +91,6 @@ export function ResumeDownloadDialog({ open, onOpenChange }: ResumeDownloadDialo
             },
             emailjsPublicKey
           )
-          console.log("Email sent successfully:", result)
-        } else {
-          console.warn("EmailJS configuration incomplete, skipping email notification")
         }
       } catch (emailError) {
         // 郵件發送失敗不影響下載，只記錄錯誤
