@@ -1,6 +1,6 @@
 "use client"
 
-import type { ReactNode, WheelEvent } from "react"
+import { useState, type ReactNode, WheelEvent } from "react"
 import Image from "next/image"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -8,8 +8,9 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 import type { ResumeSection } from "@/lib/resume-data"
-import { PlayCircle } from "lucide-react"
+import { PlayCircle, Download } from "lucide-react"
 import { useLanguage, uiCopy } from "@/lib/i18n"
+import { ResumeDownloadDialog } from "@/components/resume-download-dialog"
 
 interface InfoCardProps {
   section?: ResumeSection
@@ -19,6 +20,7 @@ interface InfoCardProps {
 export function InfoCard({ section, isVisible }: InfoCardProps) {
   const { language } = useLanguage()
   const copy = uiCopy[language]
+  const [downloadDialogOpen, setDownloadDialogOpen] = useState(false)
 
   if (!section) {
     return null
@@ -116,6 +118,21 @@ export function InfoCard({ section, isVisible }: InfoCardProps) {
             </p>
           )}
         </div>
+
+        {section.id === "contact" && (
+          <div className="pt-2 border-t border-primary/10">
+            <ResumeDownloadDialog open={downloadDialogOpen} onOpenChange={setDownloadDialogOpen} />
+            <Button
+              onClick={() => setDownloadDialogOpen(true)}
+              className="w-full"
+              size="lg"
+              variant="default"
+            >
+              <Download className="mr-2 h-4 w-4" />
+              {language === "zh" ? "下載履歷 PDF" : "Download Resume PDF"}
+            </Button>
+          </div>
+        )}
 
         {section.items && section.items.length > 0 && (
           <div className="space-y-4">
