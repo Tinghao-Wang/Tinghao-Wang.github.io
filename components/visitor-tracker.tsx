@@ -134,9 +134,11 @@ async function sendVisitorNotification(visitorInfo: VisitorInfo) {
     const emailjsTemplateId = visitorTemplateId || downloadTemplateId
     const emailjsPublicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
 
-    // 如果沒有設置訪問通知 Template，使用履歷下載的 Template
-    if (!visitorTemplateId && downloadTemplateId) {
-      console.warn("VisitorTracker: Using download template as fallback. Please set NEXT_PUBLIC_EMAILJS_VISITOR_TEMPLATE_ID")
+    // 如果沒有設置訪問通知 Template，直接返回（不發送郵件）
+    // 避免使用錯誤的 Template 導致發送錯誤類型的郵件
+    if (!visitorTemplateId) {
+      console.warn("VisitorTracker: NEXT_PUBLIC_EMAILJS_VISITOR_TEMPLATE_ID not set, skipping visitor notification")
+      return
     }
 
     if (!emailjsServiceId || !emailjsTemplateId || !emailjsPublicKey) {
